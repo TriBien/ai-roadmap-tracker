@@ -1,0 +1,1711 @@
+{
+  "title": "AI Engineer Roadmap: 28 Weeks (Python-First, Go and Rust Where Production Demands)",
+  "phases": [
+    {
+      "id": "p1",
+      "number": 1,
+      "name": "Job-ready AI engineering (Weeks 1-10)",
+      "weeks": [
+        {
+          "id": "p1w1",
+          "number": 1,
+          "title": "LLM gateway in Python (FastAPI)",
+          "sections": [
+            {
+              "key": "fundamental",
+              "label": "Fundamental",
+              "items": [
+                "LLM API mechanics: tokens, context windows, sampling, streaming, cost model.",
+                "Structured outputs and JSON-schema validation.",
+                "Python async programming (asyncio, timeouts, cancellation, backpressure) and strict typing with Pydantic.",
+                "Git workflow (trunk-based, PR checks) and Linux basics for running services (processes, ports, logs).",
+                "Resilience patterns: timeouts, retries with jitter, circuit breaker."
+              ]
+            },
+            {
+              "key": "targets",
+              "label": "Targets",
+              "items": [
+                "A provider-agnostic gateway that treats model output as untrusted input.",
+                "Failure behaviour defined before features."
+              ]
+            },
+            {
+              "key": "implement",
+              "label": "Implement",
+              "items": [
+                "FastAPI service with a provider interface (Protocol or ABC) and adapters (Anthropic, OpenAI, Gemini), fully typed and checked with mypy or pyright.",
+                "Project tooling: uv or poetry, ruff, pre-commit, pytest.",
+                "Schema-validated structured outputs with bounded retries and repair prompts.",
+                "REST endpoints (plus one gRPC endpoint via grpcio), streaming over SSE, config-driven provider selection, rate limits.",
+                "Dockerfile, GitHub Actions pipeline, unit tests with injected failures (timeouts, malformed JSON).",
+                "Run the service on a Linux host or VM with systemd and log inspection, not only on your laptop.",
+                "Create the eval package inside the same repo (pytest, dataset folder) so services and evals share types."
+              ]
+            },
+            {
+              "key": "practical-project",
+              "label": "Practical project",
+              "items": [
+                "`ai-chassis` repo. First use case: extract fields from synthetic bank statements and loan documents into a typed schema."
+              ]
+            },
+            {
+              "key": "production-mapping",
+              "label": "Production mapping",
+              "items": [
+                "Python microservices (FastAPI) over REST and gRPC; model-agnostic abstraction; failure modes, retries and guardrails; async API design."
+              ]
+            },
+            {
+              "key": "acceptance",
+              "label": "Acceptance",
+              "items": [
+                "Switching provider requires a config change only, no caller change.",
+                "Malformed model output is rejected or repaired, never passed through.",
+                "Failure-injection tests pass in CI."
+              ]
+            },
+            {
+              "key": "deliverable",
+              "label": "Deliverable",
+              "items": [
+                "Repo with README, architecture diagram, passing CI."
+              ]
+            }
+          ]
+        },
+        {
+          "id": "p1w2",
+          "number": 2,
+          "title": "Event-driven RAG on pgvector",
+          "sections": [
+            {
+              "key": "fundamental",
+              "label": "Fundamental",
+              "items": [
+                "Embeddings, chunking strategies, HNSW indexes in pgvector.",
+                "Kafka semantics: at-least-once delivery, idempotent consumers, consumer groups, replay.",
+                "OpenTelemetry basics."
+              ]
+            },
+            {
+              "key": "targets",
+              "label": "Targets",
+              "items": [
+                "A deployed end-to-end skeleton with citations and traces from day one."
+              ]
+            },
+            {
+              "key": "implement",
+              "label": "Implement",
+              "items": [
+                "Ingest events on Kafka, chunk, embed and write to pgvector (Python consumers, for example confluent-kafka).",
+                "Retrieval plus generation endpoint returning answers with chunk-level citations.",
+                "OpenTelemetry tracing and a trace per request.",
+                "Write 40 golden Q&A cases and a first eval script in Python.",
+                "Deploy to your chosen cloud."
+              ]
+            },
+            {
+              "key": "practical-project",
+              "label": "Practical project",
+              "items": [
+                "Policy Q&A over about 30 public regulatory and policy documents (KYC/AML guidance, lending rules)."
+              ]
+            },
+            {
+              "key": "production-mapping",
+              "label": "Production mapping",
+              "items": [
+                "RAG over internal documents; Kafka/CDC pipelines; observability."
+              ]
+            },
+            {
+              "key": "acceptance",
+              "label": "Acceptance",
+              "items": [
+                "Replaying the event stream creates no duplicate chunks.",
+                "Every answer carries citations that resolve to stored chunks.",
+                "Live URL, a trace per request, and a recorded baseline score."
+              ]
+            },
+            {
+              "key": "deliverable",
+              "label": "Deliverable",
+              "items": [
+                "Deployed v0 and a baseline eval report (scores, failure examples)."
+              ]
+            }
+          ]
+        },
+        {
+          "id": "p1w3",
+          "number": 3,
+          "title": "Retrieval quality, caching, Postgres tuning",
+          "sections": [
+            {
+              "key": "fundamental",
+              "label": "Fundamental",
+              "items": [
+                "Hybrid search (full-text plus vector), reranking, query rewriting.",
+                "Metrics: recall@k, MRR; latency budgets.",
+                "Postgres indexing, `EXPLAIN`, Redis caching and invalidation."
+              ]
+            },
+            {
+              "key": "targets",
+              "label": "Targets",
+              "items": [
+                "Retrieval decisions justified with numbers, within a latency budget."
+              ]
+            },
+            {
+              "key": "implement",
+              "label": "Implement",
+              "items": [
+                "Three or more retrieval configurations: vector only, hybrid, hybrid plus reranker.",
+                "Chunking and metadata experiments.",
+                "Redis cache with **permission-aware keys**.",
+                "Query and index tuning pass using `EXPLAIN`.",
+                "Replicate the core schema and three key queries on MySQL; compare indexing behaviour, `EXPLAIN` output and transactional differences with PostgreSQL."
+              ]
+            },
+            {
+              "key": "practical-project",
+              "label": "Practical project",
+              "items": [
+                "Retrieval comparison report on the policy corpus."
+              ]
+            },
+            {
+              "key": "production-mapping",
+              "label": "Production mapping",
+              "items": [
+                "Hybrid retrieval, reranking, pgvector, PostgreSQL tuning, Redis, latency and cost control."
+              ]
+            },
+            {
+              "key": "acceptance",
+              "label": "Acceptance",
+              "items": [
+                "Report compares at least three configurations with recall@k, MRR and p95 latency; the chosen one is justified.",
+                "A test proves one user cannot receive another user's cached result."
+              ]
+            },
+            {
+              "key": "deliverable",
+              "label": "Deliverable",
+              "items": [
+                "Retrieval report, tuned schema and indexes. **CV v1 and first batch of low-stakes applications sent.**"
+              ]
+            }
+          ]
+        },
+        {
+          "id": "p1w4",
+          "number": 4,
+          "title": "Evals and error analysis (Python)",
+          "sections": [
+            {
+              "key": "fundamental",
+              "label": "Fundamental",
+              "items": [
+                "Eval set design, error analysis, failure taxonomies.",
+                "LLM-as-judge: calibration against human labels, bias, noise.",
+                "Regression testing for non-deterministic systems."
+              ]
+            },
+            {
+              "key": "targets",
+              "label": "Targets",
+              "items": [
+                "The eval harness becomes a release gate."
+              ]
+            },
+            {
+              "key": "implement",
+              "label": "Implement",
+              "items": [
+                "Grow to 100+ cases across normal, edge and adversarial inputs.",
+                "Label a subset yourself and measure judge agreement.",
+                "Regression tracking across prompt, model and retrieval changes.",
+                "CI gate and a dashboard for quality, latency and cost per run."
+              ]
+            },
+            {
+              "key": "practical-project",
+              "label": "Practical project",
+              "items": [
+                "Eval-first pipeline for the policy Q&A service."
+              ]
+            },
+            {
+              "key": "production-mapping",
+              "label": "Production mapping",
+              "items": [
+                "Evaluation in every AI feature; monitoring quality, latency and cost; measure-first mindset."
+              ]
+            },
+            {
+              "key": "acceptance",
+              "label": "Acceptance",
+              "items": [
+                "A deliberately degraded prompt fails CI.",
+                "Judge-versus-human agreement is measured and reported (set a threshold, for example 80%, and document the actual figure).",
+                "Failure taxonomy covers every observed failure in the set."
+              ]
+            },
+            {
+              "key": "deliverable",
+              "label": "Deliverable",
+              "items": [
+                "Eval report, taxonomy document, CI gate."
+              ]
+            }
+          ]
+        },
+        {
+          "id": "p1w5",
+          "number": 5,
+          "title": "Agents and tool calling",
+          "sections": [
+            {
+              "key": "fundamental",
+              "label": "Fundamental",
+              "items": [
+                "Tool-calling contracts, ReAct, plan-and-execute.",
+                "State, checkpoints, idempotency, human-in-the-loop approval.",
+                "Agent failure modes: loops, wrong tool, runaway cost."
+              ]
+            },
+            {
+              "key": "targets",
+              "label": "Targets",
+              "items": [
+                "An agent that is bounded, auditable and measurable."
+              ]
+            },
+            {
+              "key": "implement",
+              "label": "Implement",
+              "items": [
+                "Python agent loop written from scratch (asyncio, typed tool contracts).",
+                "Tools: customer lookup, transaction search, draft case note (mock banking API).",
+                "Step and cost limits, per-tool permission scopes, idempotent actions.",
+                "Approval gate for any write action.",
+                "Trajectory evals (tool-call accuracy, task success).",
+                "Side exercise (half a day): rebuild one flow in LangGraph and read LangChain's tool abstractions, so you can discuss the frameworks the JDs name."
+              ]
+            },
+            {
+              "key": "practical-project",
+              "label": "Practical project",
+              "items": [
+                "KYC case assistant: investigate a flagged customer, cite policy, draft a case note for human approval."
+              ]
+            },
+            {
+              "key": "production-mapping",
+              "label": "Production mapping",
+              "items": [
+                "Agentic workflows with tool calling; at least one major framework; approval gates for high-risk actions."
+              ]
+            },
+            {
+              "key": "acceptance",
+              "label": "Acceptance",
+              "items": [
+                "The agent halts at its step and cost limits.",
+                "Write actions cannot execute without approval (tested).",
+                "Tool-call accuracy and task success measured on 30+ scenarios."
+              ]
+            },
+            {
+              "key": "deliverable",
+              "label": "Deliverable",
+              "items": [
+                "Agent module, trajectory eval results, short design note comparing hand-rolled and LangGraph versions."
+              ]
+            }
+          ]
+        },
+        {
+          "id": "p1w6",
+          "number": 6,
+          "title": "MCP, multi-agent, memory",
+          "sections": [
+            {
+              "key": "fundamental",
+              "label": "Fundamental",
+              "items": [
+                "Model Context Protocol: tools, resources, transport.",
+                "Supervisor-worker patterns, context sharing.",
+                "Short-term versus long-term memory: what to store, retrieve and expire."
+              ]
+            },
+            {
+              "key": "targets",
+              "label": "Targets",
+              "items": [
+                "Your tools usable by any MCP client; evidence on whether multi-agent helps."
+              ]
+            },
+            {
+              "key": "implement",
+              "label": "Implement",
+              "items": [
+                "MCP server exposing your tools (use the official Python MCP SDK; check its current version and transport support first).",
+                "Supervisor plus worker agents built in LangGraph, then re-implemented in CrewAI with the same tools and eval set to compare orchestration styles (note AutoGen as a third option).",
+                "Memory store in Postgres with TTL, summarization and retrieval.",
+                "A/B comparison: single agent versus multi-agent."
+              ]
+            },
+            {
+              "key": "practical-project",
+              "label": "Practical project",
+              "items": [
+                "Extend the KYC assistant with persisted case memory and a supervisor that delegates retrieval and drafting."
+              ]
+            },
+            {
+              "key": "production-mapping",
+              "label": "Production mapping",
+              "items": [
+                "MCP, multi-agent systems, context layer and memory (security JD, AI-backend JD)."
+              ]
+            },
+            {
+              "key": "acceptance",
+              "label": "Acceptance",
+              "items": [
+                "An external MCP client can discover and call your tools.",
+                "Comparison report on success, cost and latency; report the result even if multi-agent loses.",
+                "Memory expiry and retrieval covered by tests.",
+                "The same scenarios run on both frameworks; differences in control, debuggability and cost documented."
+              ]
+            },
+            {
+              "key": "deliverable",
+              "label": "Deliverable",
+              "items": [
+                "MCP server, comparison report, memory design note."
+              ]
+            }
+          ]
+        },
+        {
+          "id": "p1w7",
+          "number": 7,
+          "title": "Safety, governance, audit",
+          "sections": [
+            {
+              "key": "fundamental",
+              "label": "Fundamental",
+              "items": [
+                "LLM threat model: direct and indirect prompt injection, data leakage, tool abuse.",
+                "Enforcing permissions at the retrieval and tool layer, not in the prompt.",
+                "PII handling, audit logging, OWASP LLM Top 10, NIST AI RMF vocabulary."
+              ]
+            },
+            {
+              "key": "targets",
+              "label": "Targets",
+              "items": [
+                "Provable controls, not claimed ones."
+              ]
+            },
+            {
+              "key": "implement",
+              "label": "Implement",
+              "items": [
+                "Field allowlists so the model sees only permitted data.",
+                "Row-level access filters in retrieval.",
+                "Red-team suite of about 40 attacks (including injection through retrieved documents and tool outputs) in CI.",
+                "PII detection and redaction.",
+                "Audit log schema: user, query, retrieved chunks, tool calls, model and prompt version, output.",
+                "Put the Python PII redactor and audit writer behind interfaces with contract tests and a benchmark harness; they become the reference implementations for later variants."
+              ]
+            },
+            {
+              "key": "practical-project",
+              "label": "Practical project",
+              "items": [
+                "Security hardening of the KYC assistant with an attack report."
+              ]
+            },
+            {
+              "key": "production-mapping",
+              "label": "Production mapping",
+              "items": [
+                "Prompt injection, data leakage, access control, guardrails, auditability (finance JD); data governance (AI-backend JD); adversarial inputs (security JDs)."
+              ]
+            },
+            {
+              "key": "acceptance",
+              "label": "Acceptance",
+              "items": [
+                "Cross-user and cross-tenant access tests all fail to leak data.",
+                "Red-team results documented, with residual risks listed honestly.",
+                "Any answer can be reconstructed from the audit log."
+              ]
+            },
+            {
+              "key": "deliverable",
+              "label": "Deliverable",
+              "items": [
+                "Red-team suite, audit schema, security design note."
+              ]
+            }
+          ]
+        },
+        {
+          "id": "p1w8",
+          "number": 8,
+          "title": "Data pipeline, backtesting, first ML component",
+          "sections": [
+            {
+              "key": "fundamental",
+              "label": "Fundamental",
+              "items": [
+                "CDC concepts (Debezium), event-driven feature pipelines.",
+                "Time-based splits, leakage, backtesting, shadow mode.",
+                "Baseline ML with scikit-learn; explaining results to business readers."
+              ]
+            },
+            {
+              "key": "targets",
+              "label": "Targets",
+              "items": [
+                "Prove a model change with data before go-live; first step of the ML track."
+              ]
+            },
+            {
+              "key": "implement",
+              "label": "Implement",
+              "items": [
+                "Postgres CDC to Kafka to a feature table.",
+                "Python anomaly or recommendation scorer (for example isolation forest) built with NumPy and pandas, with a time-split backtest.",
+                "Leakage tests; shadow deployment comparing the model against current behaviour.",
+                "Serve the scorer through a FastAPI REST service next to the gateway (Pydantic schemas, health checks) and expose it as a tool the agent can call.",
+                "Polyglot variant (about 5 hours): re-implement the Kafka consumer in Go (consumer groups, idempotent handler, retries, dead-letter queue) behind the same contract as the Python reference; benchmark both on the same replayed topic."
+              ]
+            },
+            {
+              "key": "practical-project",
+              "label": "Practical project",
+              "items": [
+                "Transaction anomaly scoring for the KYC assistant, with a plain-language results memo."
+              ]
+            },
+            {
+              "key": "production-mapping",
+              "label": "Production mapping",
+              "items": [
+                "Event-stream pipelines; backtests before go-live; classification and anomaly detection; explaining model results (AI-backend JD, security JD B); Go for high-throughput event consumers."
+              ]
+            },
+            {
+              "key": "acceptance",
+              "label": "Acceptance",
+              "items": [
+                "A leakage test exists and passes.",
+                "Backtest compared against a naive baseline on a stated metric; if the model doesn't win, say so.",
+                "Memo is readable by a non-engineer.",
+                "The FastAPI endpoint has contract tests and a load-test baseline.",
+                "Go and Python consumers pass the same replay and poison-message tests; throughput, p99, memory and operational notes recorded; the Go variant is kept only if it clears the declared threshold."
+              ]
+            },
+            {
+              "key": "deliverable",
+              "label": "Deliverable",
+              "items": [
+                "Pipeline code, backtest notebook or script, one-page memo."
+              ]
+            }
+          ]
+        },
+        {
+          "id": "p1w9",
+          "number": 9,
+          "title": "AI-assisted engineering, decision records, standards",
+          "sections": [
+            {
+              "key": "fundamental",
+              "label": "Fundamental",
+              "items": [
+                "Spec-driven development with coding agents; review discipline; when not to trust generated code.",
+                "Architecture decision records (ADRs)."
+              ]
+            },
+            {
+              "key": "targets",
+              "label": "Targets",
+              "items": [
+                "Evidence of senior judgment and team-raising practices."
+              ]
+            },
+            {
+              "key": "implement",
+              "label": "Implement",
+              "items": [
+                "Repo instruction file, test gates for agent-written code, a small internal tool or script that speeds your workflow (for example an eval-run command).",
+                "Five ADRs: model selection, retrieval design, agent workflow, cost and latency, permissions model.",
+                "\"AI engineering standards\" document: patterns, review checklist, eval requirements.",
+                "Choose one domain pack: finance KYC, payroll/HR, or security triage.",
+                "Polyglot variant (about 5 hours): Go edge gateway in front of the Python gateway (JWT or API-key auth, per-tenant rate limits and token budgets, SSE streaming proxy, audit events), compared with the same features in the Python gateway; write the ADR \"Python vs Go at the edge\"."
+              ]
+            },
+            {
+              "key": "practical-project",
+              "label": "Practical project",
+              "items": [
+                "Portfolio polish: README per repo, architecture diagrams, demo flow."
+              ]
+            },
+            {
+              "key": "production-mapping",
+              "label": "Production mapping",
+              "items": [
+                "Daily use of AI coding tools with judgment (AI-backend JD); mentoring and reusable standards (finance JD)."
+              ]
+            },
+            {
+              "key": "acceptance",
+              "label": "Acceptance",
+              "items": [
+                "Each ADR lists alternatives and measured evidence.",
+                "Standards checklist applied to your own repo.",
+                "A written note of real cases where generated code was wrong or rejected (only real ones).",
+                "The edge ADR contains benchmark numbers (p95, throughput, memory) and a keep-or-retire decision; unauthorized and over-budget requests are rejected identically by both implementations."
+              ]
+            },
+            {
+              "key": "deliverable",
+              "label": "Deliverable",
+              "items": [
+                "ADRs, standards document, polished repos, edge-gateway benchmark."
+              ]
+            }
+          ]
+        },
+        {
+          "id": "p1w10",
+          "number": 10,
+          "title": "Interview drills and application sprint",
+          "sections": [
+            {
+              "key": "fundamental",
+              "label": "Fundamental",
+              "items": [
+                "AI system design; Python concurrency (asyncio, threads versus processes, the GIL); Kafka delivery and ordering; Postgres tuning; incident troubleshooting."
+              ]
+            },
+            {
+              "key": "targets",
+              "label": "Targets",
+              "items": [
+                "Articulate trade-offs fluently; convert interviews into offers."
+              ]
+            },
+            {
+              "key": "implement",
+              "label": "Implement",
+              "items": [
+                "Practise five design prompts aloud: KYC Q&A with audit; dispute-handling agent; halving cost and latency; injection defence for a tool-using agent; regression strategy when models change quarterly.",
+                "Three mock interviews; one timed coding exercise; one take-home simulation.",
+                "Story bank mapping every JD bullet to a concrete example with numbers.",
+                "Prepare two stories from the polyglot variants: one where Go or Rust won and one where Python was enough, each with numbers.",
+                "CV v2 tailored per JD; 10-15 applications plus referrals."
+              ]
+            },
+            {
+              "key": "practical-project",
+              "label": "Practical project",
+              "items": [
+                "Five-minute capstone demo video and a one-page case study."
+              ]
+            },
+            {
+              "key": "production-mapping",
+              "label": "Production mapping",
+              "items": [
+                "All four JDs: decision-making, stakeholder communication, mentoring, incident handling."
+              ]
+            },
+            {
+              "key": "acceptance",
+              "label": "Acceptance",
+              "items": [
+                "Each design answer covers failure modes, evals, cost and security within 10 minutes.",
+                "Mock feedback captured and the top three gaps addressed."
+              ]
+            },
+            {
+              "key": "deliverable",
+              "label": "Deliverable",
+              "items": [
+                "Demo video, case study, story bank, application tracker."
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "p2",
+      "number": 2,
+      "name": "ML and LLM-engineer depth (Weeks 11-28)",
+      "weeks": [
+        {
+          "id": "p2w11",
+          "number": 11,
+          "title": "Document AI I, OCR and layout analysis",
+          "sections": [
+            {
+              "key": "fundamental",
+              "label": "Fundamental",
+              "items": [
+                "OCR pipeline: image preprocessing, text detection and recognition, digital-PDF text versus scanned pages.",
+                "Layout analysis: blocks, tables, reading order; layout-aware model families (LayoutLM-style) at concept level.",
+                "Metrics: character and word error rate, table-structure accuracy."
+              ]
+            },
+            {
+              "key": "targets",
+              "label": "Targets",
+              "items": [
+                "Reliable text and structure from messy documents, with measured error."
+              ]
+            },
+            {
+              "key": "implement",
+              "label": "Implement",
+              "items": [
+                "Pipeline with one open OCR engine (Tesseract, PaddleOCR or docTR; pick one) plus layout and table detection.",
+                "Router that sends digital PDFs and scanned pages down different paths.",
+                "Command-line tooling on Linux (poppler, ImageMagick) for batch processing.",
+                "Hand-label 50 pages to measure error rates."
+              ]
+            },
+            {
+              "key": "practical-project",
+              "label": "Practical project",
+              "items": [
+                "Ingestion upgrade for the KYC assistant: scanned bank statements and invoices (synthetic or public datasets)."
+              ]
+            },
+            {
+              "key": "production-mapping",
+              "label": "Production mapping",
+              "items": [
+                "Document AI: OCR, layout analysis; document pipelines feeding RAG."
+              ]
+            },
+            {
+              "key": "acceptance",
+              "label": "Acceptance",
+              "items": [
+                "Character and word error rates reported on 50 labelled pages.",
+                "Tables recovered with a measured structure score; failures catalogued.",
+                "Routing between digital and scanned paths tested."
+              ]
+            },
+            {
+              "key": "deliverable",
+              "label": "Deliverable",
+              "items": [
+                "Pipeline repo and an error-analysis report with failure examples."
+              ]
+            }
+          ]
+        },
+        {
+          "id": "p2w12",
+          "number": 12,
+          "title": "Document AI II, information extraction",
+          "sections": [
+            {
+              "key": "fundamental",
+              "label": "Fundamental",
+              "items": [
+                "Key-value and table extraction; LLM or VLM extraction versus layout-model extraction.",
+                "Confidence scoring, human-review routing, field-level evaluation, schema versioning."
+              ]
+            },
+            {
+              "key": "targets",
+              "label": "Targets",
+              "items": [
+                "Extraction you can trust field by field, with a safe fallback."
+              ]
+            },
+            {
+              "key": "implement",
+              "label": "Implement",
+              "items": [
+                "Schema-driven extraction (Pydantic) with an LLM or vision-language model, compared against a layout-based baseline.",
+                "FastAPI `/extract` service with typed request and response models, health checks and OpenAPI docs.",
+                "Confidence thresholds, review queue, PostgreSQL storage.",
+                "Field-level eval harness (exact and fuzzy match per field).",
+                "Polyglot variant (about 5 hours): Rust crate for document-text normalization and PII redaction, exposed to Python through PyO3 and benchmarked against the W7 Python reference on real OCR output; fuzz the parsing paths with `cargo-fuzz`."
+              ]
+            },
+            {
+              "key": "practical-project",
+              "label": "Practical project",
+              "items": [
+                "Document intake service feeding the KYC assistant (statements, invoices)."
+              ]
+            },
+            {
+              "key": "production-mapping",
+              "label": "Production mapping",
+              "items": [
+                "Information extraction; FastAPI and RESTful APIs; PostgreSQL; Rust for safe, fast handling of untrusted document text."
+              ]
+            },
+            {
+              "key": "acceptance",
+              "label": "Acceptance",
+              "items": [
+                "Per-field precision and recall reported; weakest fields identified.",
+                "Low-confidence results routed to review in tests.",
+                "Latency and cost per page recorded.",
+                "Rust and Python redactors produce identical detections on the labelled set; throughput and memory compared; fuzzing finds no crashes in a fixed budget (or each crash has a regression test)."
+              ]
+            },
+            {
+              "key": "deliverable",
+              "label": "Deliverable",
+              "items": [
+                "Deployed service and evaluation report."
+              ]
+            }
+          ]
+        },
+        {
+          "id": "p2w13",
+          "number": 13,
+          "title": "Data and Python for ML (NumPy, Pandas)",
+          "sections": [
+            {
+              "key": "fundamental",
+              "label": "Fundamental",
+              "items": [
+                "NumPy vectorization, pandas pipelines, exploratory analysis, statistics basics, leakage, metric selection."
+              ]
+            },
+            {
+              "key": "targets",
+              "label": "Targets",
+              "items": [
+                "Fluent data wrangling; metrics tied to business cost."
+              ]
+            },
+            {
+              "key": "implement",
+              "label": "Implement",
+              "items": [
+                "Cleaning and feature scripts; time-based train/validation/test splits.",
+                "Load the same dataset into PostgreSQL and MySQL; compare query plans, indexing and transaction behaviour."
+              ]
+            },
+            {
+              "key": "practical-project",
+              "label": "Practical project",
+              "items": [
+                "Credit default or fraud dataset (public): full EDA with documented pitfalls."
+              ]
+            },
+            {
+              "key": "production-mapping",
+              "label": "Production mapping",
+              "items": [
+                "NumPy and pandas proficiency; PostgreSQL and MySQL; data skills for backtests."
+              ]
+            },
+            {
+              "key": "acceptance",
+              "label": "Acceptance",
+              "items": [
+                "Split strategy justified in writing; metric choice tied to cost; MySQL versus PostgreSQL differences documented with evidence."
+              ]
+            },
+            {
+              "key": "deliverable",
+              "label": "Deliverable",
+              "items": [
+                "EDA report, reusable data-prep module, database comparison note."
+              ]
+            }
+          ]
+        },
+        {
+          "id": "p2w14",
+          "number": 14,
+          "title": "Supervised learning, ensembles, hyperparameter tuning",
+          "sections": [
+            {
+              "key": "fundamental",
+              "label": "Fundamental",
+              "items": [
+                "Linear and logistic models, trees, regularization, cross-validation, calibration, class imbalance.",
+                "Random forest, gradient boosting (XGBoost/LightGBM), search strategies for hyperparameters."
+              ]
+            },
+            {
+              "key": "targets",
+              "label": "Targets",
+              "items": [
+                "Understand the models behind your scorers; know when tabular models beat LLMs."
+              ]
+            },
+            {
+              "key": "implement",
+              "label": "Implement",
+              "items": [
+                "scikit-learn baselines; boosted models; Optuna search with proper validation; calibration curves; cost-based thresholds."
+              ]
+            },
+            {
+              "key": "practical-project",
+              "label": "Practical project",
+              "items": [
+                "Fraud and credit-risk scorers integrated as agent tools; compare with the W8 baseline."
+              ]
+            },
+            {
+              "key": "production-mapping",
+              "label": "Production mapping",
+              "items": [
+                "ML fundamentals; hyperparameter tuning; model evaluation; classification and scoring."
+              ]
+            },
+            {
+              "key": "acceptance",
+              "label": "Acceptance",
+              "items": [
+                "Time-based backtest shows improvement over W8 or an honest tie; tuning budget and results logged; latency and cost per prediction recorded."
+              ]
+            },
+            {
+              "key": "deliverable",
+              "label": "Deliverable",
+              "items": [
+                "Models, backtest report, \"LLM versus classical ML\" decision note."
+              ]
+            }
+          ]
+        },
+        {
+          "id": "p2w15",
+          "number": 15,
+          "title": "Anomaly detection and time series",
+          "sections": [
+            {
+              "key": "fundamental",
+              "label": "Fundamental",
+              "items": [
+                "Isolation forest, one-class methods, seasonal baselines, forecasting basics, drift."
+              ]
+            },
+            {
+              "key": "targets",
+              "label": "Targets",
+              "items": [
+                "Behavioural analytics usable by finance and security agents."
+              ]
+            },
+            {
+              "key": "implement",
+              "label": "Implement",
+              "items": [
+                "Streaming-friendly detector, forecast baseline, drift checks, FastAPI endpoint."
+              ]
+            },
+            {
+              "key": "practical-project",
+              "label": "Practical project",
+              "items": [
+                "Behaviour-baseline service: per-entity normal activity and deviation scores consumed by the agent."
+              ]
+            },
+            {
+              "key": "production-mapping",
+              "label": "Production mapping",
+              "items": [
+                "Anomaly detection and behavioural pattern recognition."
+              ]
+            },
+            {
+              "key": "acceptance",
+              "label": "Acceptance",
+              "items": [
+                "False-positive rate and detection delay measured on labelled or injected anomalies."
+              ]
+            },
+            {
+              "key": "deliverable",
+              "label": "Deliverable",
+              "items": [
+                "Service and evaluation report."
+              ]
+            }
+          ]
+        },
+        {
+          "id": "p2w16",
+          "number": 16,
+          "title": "Deep learning with PyTorch",
+          "sections": [
+            {
+              "key": "fundamental",
+              "label": "Fundamental",
+              "items": [
+                "Tensors, autograd, training loops, optimizers, regularization, overfitting, learning-rate schedules, mixed precision."
+              ]
+            },
+            {
+              "key": "targets",
+              "label": "Targets",
+              "items": [
+                "Write and debug a training loop without framework crutches."
+              ]
+            },
+            {
+              "key": "implement",
+              "label": "Implement",
+              "items": [
+                "MLP for tabular data; CNN or sequence model on a small task; training scripts with seeds, configs and logged curves; GPU training run."
+              ]
+            },
+            {
+              "key": "practical-project",
+              "label": "Practical project",
+              "items": [
+                "Alert or ticket classifier compared against the gradient-boosting baseline."
+              ]
+            },
+            {
+              "key": "production-mapping",
+              "label": "Production mapping",
+              "items": [
+                "PyTorch; deep learning understanding; model evaluation."
+              ]
+            },
+            {
+              "key": "acceptance",
+              "label": "Acceptance",
+              "items": [
+                "Reproducible training run; written comparison with the classical baseline, including cost and training time."
+              ]
+            },
+            {
+              "key": "deliverable",
+              "label": "Deliverable",
+              "items": [
+                "Training repo with seeds, configs and results."
+              ]
+            }
+          ]
+        },
+        {
+          "id": "p2w17",
+          "number": 17,
+          "title": "NLP, embeddings and TensorFlow",
+          "sections": [
+            {
+              "key": "fundamental",
+              "label": "Fundamental",
+              "items": [
+                "Tokenization, embeddings, text classification, sequence labelling (NER), similarity search, reranker models.",
+                "TensorFlow/Keras model-building idioms versus PyTorch."
+              ]
+            },
+            {
+              "key": "targets",
+              "label": "Targets",
+              "items": [
+                "Competent in both frameworks; evidence-based embedding choices."
+              ]
+            },
+            {
+              "key": "implement",
+              "label": "Implement",
+              "items": [
+                "NER or classification model in PyTorch, ported to TensorFlow/Keras; compare effort, speed and results.",
+                "Embedding and cross-encoder reranker bake-off on your retrieval set."
+              ]
+            },
+            {
+              "key": "practical-project",
+              "label": "Practical project",
+              "items": [
+                "Embedding and reranker bake-off for the policy corpus, feeding the winner back into the chassis."
+              ]
+            },
+            {
+              "key": "production-mapping",
+              "label": "Production mapping",
+              "items": [
+                "NLP; TensorFlow and PyTorch; semantic search and vector databases."
+              ]
+            },
+            {
+              "key": "acceptance",
+              "label": "Acceptance",
+              "items": [
+                "Report on recall, MRR, latency and cost per model; the chassis updated with the chosen model; TensorFlow port reproduces PyTorch metrics within a stated tolerance."
+              ]
+            },
+            {
+              "key": "deliverable",
+              "label": "Deliverable",
+              "items": [
+                "Bake-off report, updated retrieval module, both framework implementations."
+              ]
+            }
+          ]
+        },
+        {
+          "id": "p2w18",
+          "number": 18,
+          "title": "Transformer internals",
+          "sections": [
+            {
+              "key": "fundamental",
+              "label": "Fundamental",
+              "items": [
+                "Attention, positional encoding, KV cache, context-length cost, decoding strategies, training objectives."
+              ]
+            },
+            {
+              "key": "targets",
+              "label": "Targets",
+              "items": [
+                "Reason about latency, memory and failure modes from first principles."
+              ]
+            },
+            {
+              "key": "implement",
+              "label": "Implement",
+              "items": [
+                "Small GPT-style model on a toy corpus; measure memory and speed versus context length.",
+                "Read two foundational papers and summarise them in your own words."
+              ]
+            },
+            {
+              "key": "practical-project",
+              "label": "Practical project",
+              "items": [
+                "\"Why is this prompt slow and expensive?\" analysis applied to your own agent traces."
+              ]
+            },
+            {
+              "key": "production-mapping",
+              "label": "Production mapping",
+              "items": [
+                "Transformer architecture understanding; latency and token cost."
+              ]
+            },
+            {
+              "key": "acceptance",
+              "label": "Acceptance",
+              "items": [
+                "Written explanation links KV cache and context length to measured latency in your traces."
+              ]
+            },
+            {
+              "key": "deliverable",
+              "label": "Deliverable",
+              "items": [
+                "Mini-model repo and analysis note."
+              ]
+            }
+          ]
+        },
+        {
+          "id": "p2w19",
+          "number": 19,
+          "title": "Fine-tuning I, SFT with LoRA/PEFT",
+          "sections": [
+            {
+              "key": "fundamental",
+              "label": "Fundamental",
+              "items": [
+                "When to fine-tune versus prompt versus retrieve; dataset curation and formatting; supervised fine-tuning (SFT); LoRA and PEFT mechanics; overfitting and forgetting."
+              ]
+            },
+            {
+              "key": "targets",
+              "label": "Targets",
+              "items": [
+                "A first reproducible fine-tune evaluated on your own eval set."
+              ]
+            },
+            {
+              "key": "implement",
+              "label": "Implement",
+              "items": [
+                "Curate 1,000+ examples for one narrow task (for example field extraction or case-note drafting).",
+                "SFT with LoRA on a small Qwen model using Hugging Face tooling; experiment tracking.",
+                "Evaluate against the prompted baseline on the same eval harness."
+              ]
+            },
+            {
+              "key": "practical-project",
+              "label": "Practical project",
+              "items": [
+                "Fine-tuned extractor or drafter compared to the prompted baseline."
+              ]
+            },
+            {
+              "key": "production-mapping",
+              "label": "Production mapping",
+              "items": [
+                "LLM fine-tuning with LoRA, PEFT and SFT; model evaluation."
+              ]
+            },
+            {
+              "key": "acceptance",
+              "label": "Acceptance",
+              "items": [
+                "Training reproducible from config; quality, cost and latency compared with the prompted baseline; data-leakage check between train and eval sets."
+              ]
+            },
+            {
+              "key": "deliverable",
+              "label": "Deliverable",
+              "items": [
+                "Adapter, training config, comparison report."
+              ]
+            }
+          ]
+        },
+        {
+          "id": "p2w20",
+          "number": 20,
+          "title": "Fine-tuning II, QLoRA and multi-model comparison",
+          "sections": [
+            {
+              "key": "fundamental",
+              "label": "Fundamental",
+              "items": [
+                "QLoRA and 4-bit training; rank, alpha, learning-rate and batch-size effects; catastrophic forgetting; model selection across families."
+              ]
+            },
+            {
+              "key": "targets",
+              "label": "Targets",
+              "items": [
+                "Hands-on evidence across Qwen, Llama and Mistral."
+              ]
+            },
+            {
+              "key": "implement",
+              "label": "Implement",
+              "items": [
+                "QLoRA runs on Llama and Mistral models (plus the Qwen run from W19) with a hyperparameter search.",
+                "Evaluate quality, memory, speed and regression on general ability."
+              ]
+            },
+            {
+              "key": "practical-project",
+              "label": "Practical project",
+              "items": [
+                "Three-model comparison on one task with a recommendation."
+              ]
+            },
+            {
+              "key": "production-mapping",
+              "label": "Production mapping",
+              "items": [
+                "QLoRA; Qwen, Llama and Mistral; hyperparameter tuning; model evaluation."
+              ]
+            },
+            {
+              "key": "acceptance",
+              "label": "Acceptance",
+              "items": [
+                "Table of quality, VRAM, training time and inference cost per model; recommendation justified; failures and instabilities documented."
+              ]
+            },
+            {
+              "key": "deliverable",
+              "label": "Deliverable",
+              "items": [
+                "Comparison report and reusable training templates."
+              ]
+            }
+          ]
+        },
+        {
+          "id": "p2w21",
+          "number": 21,
+          "title": "GPU, CUDA fundamentals, quantization",
+          "sections": [
+            {
+              "key": "fundamental",
+              "label": "Fundamental",
+              "items": [
+                "GPU architecture and memory hierarchy; CUDA execution model (kernels, threads, streams) at working level; profiling; mixed precision.",
+                "Quantization: GPTQ, AWQ, GGUF, bitsandbytes; accuracy versus speed trade-offs."
+              ]
+            },
+            {
+              "key": "targets",
+              "label": "Targets",
+              "items": [
+                "Diagnose GPU bottlenecks and quantify quantization trade-offs. Scope: working literacy and profiling, not production kernel authoring."
+              ]
+            },
+            {
+              "key": "implement",
+              "label": "Implement",
+              "items": [
+                "Profile training and inference with PyTorch profiler and Nsight basics.",
+                "Write one simple CUDA-level exercise (for example via Numba or Triton) to understand kernels.",
+                "Quantize one fine-tuned model with two methods; run evals on each."
+              ]
+            },
+            {
+              "key": "practical-project",
+              "label": "Practical project",
+              "items": [
+                "Quantization study on the W19-20 model with quality, latency and memory results."
+              ]
+            },
+            {
+              "key": "production-mapping",
+              "label": "Production mapping",
+              "items": [
+                "GPU/CUDA, quantization, model optimization."
+              ]
+            },
+            {
+              "key": "acceptance",
+              "label": "Acceptance",
+              "items": [
+                "Bottleneck identified from a profile trace; quality loss per quantization method measured on your eval set."
+              ]
+            },
+            {
+              "key": "deliverable",
+              "label": "Deliverable",
+              "items": [
+                "Profiling notes and quantization report."
+              ]
+            }
+          ]
+        },
+        {
+          "id": "p2w22",
+          "number": 22,
+          "title": "Serving and deployment, vLLM with FastAPI",
+          "sections": [
+            {
+              "key": "fundamental",
+              "label": "Fundamental",
+              "items": [
+                "Serving engines, continuous batching, KV-cache memory, throughput versus latency, GPU containers, Linux operations, air-gapped packaging."
+              ]
+            },
+            {
+              "key": "targets",
+              "label": "Targets",
+              "items": [
+                "Self-hosted models behind your existing gateway."
+              ]
+            },
+            {
+              "key": "implement",
+              "label": "Implement",
+              "items": [
+                "Serve a model with vLLM (or an equivalent engine) and wrap domain endpoints in FastAPI.",
+                "Add an adapter to the gateway; run load tests; Dockerize with GPU support; operate the host with Linux tooling (systemd, logs, `nvidia-smi`, `perf`-style checks).",
+                "Offline packaging test for an air-gapped scenario."
+              ]
+            },
+            {
+              "key": "practical-project",
+              "label": "Practical project",
+              "items": [
+                "Hosted versus self-hosted comparison on your eval set with a cost model."
+              ]
+            },
+            {
+              "key": "production-mapping",
+              "label": "Production mapping",
+              "items": [
+                "vLLM, FastAPI and REST deployment; Docker and Linux; on-premise deployments."
+              ]
+            },
+            {
+              "key": "acceptance",
+              "label": "Acceptance",
+              "items": [
+                "The gateway switches to the local model by config; throughput, p95 latency and cost-per-request table produced; service restarts cleanly under failure tests."
+              ]
+            },
+            {
+              "key": "deliverable",
+              "label": "Deliverable",
+              "items": [
+                "Serving stack, load-test report, runbook."
+              ]
+            }
+          ]
+        },
+        {
+          "id": "p2w23",
+          "number": 23,
+          "title": "Advanced retrieval, Text-to-Query, knowledge graphs",
+          "sections": [
+            {
+              "key": "fundamental",
+              "label": "Fundamental",
+              "items": [
+                "Query rewriting, multi-hop retrieval, semantic layers, graph modelling (Neo4j basics), safe Text-to-SQL."
+              ]
+            },
+            {
+              "key": "targets",
+              "label": "Targets",
+              "items": [
+                "Structured knowledge alongside documents."
+              ]
+            },
+            {
+              "key": "implement",
+              "label": "Implement",
+              "items": [
+                "Read-only Text-to-SQL with schema allowlists and execution-accuracy evals.",
+                "Small entity graph for customers, accounts and cases."
+              ]
+            },
+            {
+              "key": "practical-project",
+              "label": "Practical project",
+              "items": [
+                "\"Ask your data\" tool for the KYC assistant with query validation."
+              ]
+            },
+            {
+              "key": "production-mapping",
+              "label": "Production mapping",
+              "items": [
+                "Text-to-Query, knowledge graphs, semantic layers."
+              ]
+            },
+            {
+              "key": "acceptance",
+              "label": "Acceptance",
+              "items": [
+                "Execution accuracy measured; destructive queries blocked by tests."
+              ]
+            },
+            {
+              "key": "deliverable",
+              "label": "Deliverable",
+              "items": [
+                "Text-to-Query module, graph prototype, evaluation report."
+              ]
+            }
+          ]
+        },
+        {
+          "id": "p2w24",
+          "number": 24,
+          "title": "MLOps, LLMOps and CI/CD",
+          "sections": [
+            {
+              "key": "fundamental",
+              "label": "Fundamental",
+              "items": [
+                "Experiment tracking (MLflow), model and prompt registries, canary and shadow releases, drift monitoring, rollback.",
+                "CI/CD on both GitHub Actions and GitLab CI."
+              ]
+            },
+            {
+              "key": "targets",
+              "label": "Targets",
+              "items": [
+                "Operate models and prompts like any production artifact, on either CI system."
+              ]
+            },
+            {
+              "key": "implement",
+              "label": "Implement",
+              "items": [
+                "Track experiments and eval runs; register models, adapters and prompt versions; drift dashboards; canary release for a model change.",
+                "Mirror the pipeline in GitLab CI and note the differences (runners, caching, includes)."
+              ]
+            },
+            {
+              "key": "practical-project",
+              "label": "Practical project",
+              "items": [
+                "End-to-end release pipeline for the extractor, classifier and prompt set."
+              ]
+            },
+            {
+              "key": "production-mapping",
+              "label": "Production mapping",
+              "items": [
+                "MLOps/LLMOps; Git, Docker, CI/CD with GitHub Actions and GitLab CI."
+              ]
+            },
+            {
+              "key": "acceptance",
+              "label": "Acceptance",
+              "items": [
+                "A deliberately bad model candidate is blocked by the gate; rollback tested; the same pipeline passes on both CI systems."
+              ]
+            },
+            {
+              "key": "deliverable",
+              "label": "Deliverable",
+              "items": [
+                "Pipeline definitions and runbook."
+              ]
+            }
+          ]
+        },
+        {
+          "id": "p2w25",
+          "number": 25,
+          "title": "Cost and latency at scale",
+          "sections": [
+            {
+              "key": "fundamental",
+              "label": "Fundamental",
+              "items": [
+                "Model routing, caching layers, batching, streaming, budgets, distillation concepts."
+              ]
+            },
+            {
+              "key": "targets",
+              "label": "Targets",
+              "items": [
+                "Reduce cost and latency without losing measured quality."
+              ]
+            },
+            {
+              "key": "implement",
+              "label": "Implement",
+              "items": [
+                "Router sending easy requests to a cheaper or self-hosted model; permission-aware semantic and exact caches; per-tenant budget enforcement.",
+                "Polyglot variant (about 5 hours, optional): move exact-cache lookups and budget counters into the Go edge; compare end-to-end cost and p95 latency against the Python reference."
+              ]
+            },
+            {
+              "key": "practical-project",
+              "label": "Practical project",
+              "items": [
+                "Cost-reduction exercise on the KYC assistant with before/after numbers."
+              ]
+            },
+            {
+              "key": "production-mapping",
+              "label": "Production mapping",
+              "items": [
+                "Latency, cost and token efficiency."
+              ]
+            },
+            {
+              "key": "acceptance",
+              "label": "Acceptance",
+              "items": [
+                "Documented cost and latency reduction with no regression on the eval gate.",
+                "Variant results recorded; if the edge version does not clear the threshold, retire it and note why."
+              ]
+            },
+            {
+              "key": "deliverable",
+              "label": "Deliverable",
+              "items": [
+                "Router, budget controls, results table."
+              ]
+            }
+          ]
+        },
+        {
+          "id": "p2w26",
+          "number": 26,
+          "title": "Model risk, explainability, fairness",
+          "sections": [
+            {
+              "key": "fundamental",
+              "label": "Fundamental",
+              "items": [
+                "Explainability methods, bias and fairness tests, model documentation, audit trails, regulatory vocabulary."
+              ]
+            },
+            {
+              "key": "targets",
+              "label": "Targets",
+              "items": [
+                "Defend models to risk and compliance stakeholders."
+              ]
+            },
+            {
+              "key": "implement",
+              "label": "Implement",
+              "items": [
+                "Explanations for the credit and fraud models; fairness slices; model cards; audit log extended to model decisions.",
+                "Polyglot variant (about 5 hours): Rust append-only audit store (idempotent writes, tamper-evident hashing, query endpoints) behind the same contract as the Python audit writer; load-test both."
+              ]
+            },
+            {
+              "key": "practical-project",
+              "label": "Practical project",
+              "items": [
+                "Governance pack for the capstone: model cards, risk register, audit walkthrough."
+              ]
+            },
+            {
+              "key": "production-mapping",
+              "label": "Production mapping",
+              "items": [
+                "AI governance, model risk, explainability, KYC/AML."
+              ]
+            },
+            {
+              "key": "acceptance",
+              "label": "Acceptance",
+              "items": [
+                "A non-technical reviewer can follow the audit walkthrough and find the evidence for a sample decision.",
+                "Rust and Python audit stores pass the same idempotency and reconstruction tests; write throughput, tail latency and memory compared."
+              ]
+            },
+            {
+              "key": "deliverable",
+              "label": "Deliverable",
+              "items": [
+                "Governance pack."
+              ]
+            }
+          ]
+        },
+        {
+          "id": "p2w27",
+          "number": 27,
+          "title": "Shared AI platform",
+          "sections": [
+            {
+              "key": "fundamental",
+              "label": "Fundamental",
+              "items": [
+                "Platform design: reusable modules, versioned APIs, multi-product support, developer experience."
+              ]
+            },
+            {
+              "key": "targets",
+              "label": "Targets",
+              "items": [
+                "Turn the capstone into reusable capabilities."
+              ]
+            },
+            {
+              "key": "implement",
+              "label": "Implement",
+              "items": [
+                "Package gateway, retrieval, agent runtime, Document AI, eval harness, guardrails, serving and observability as documented modules.",
+                "Add a second domain pack to prove reuse.",
+                "Make every variant swappable by configuration against its Python reference; run one CI matrix across Python, Go and Rust with the same contract and eval tests.",
+                "Write a keep-or-retire ADR per variant using the benchmark results."
+              ]
+            },
+            {
+              "key": "practical-project",
+              "label": "Practical project",
+              "items": [
+                "Second product built on the platform in a few days, with timing recorded."
+              ]
+            },
+            {
+              "key": "production-mapping",
+              "label": "Production mapping",
+              "items": [
+                "Shared AI platforms; reusable standards."
+              ]
+            },
+            {
+              "key": "acceptance",
+              "label": "Acceptance",
+              "items": [
+                "The second domain pack reuses at least 70% of the platform code (record the actual ratio) and passes the same eval and security gates.",
+                "Switching any variant back to its Python reference is a configuration change with no test failures."
+              ]
+            },
+            {
+              "key": "deliverable",
+              "label": "Deliverable",
+              "items": [
+                "Platform repo and onboarding guide."
+              ]
+            }
+          ]
+        },
+        {
+          "id": "p2w28",
+          "number": 28,
+          "title": "Review and next 90 days",
+          "sections": [
+            {
+              "key": "fundamental",
+              "label": "Fundamental",
+              "items": [
+                "Retrospective methods; portfolio storytelling."
+              ]
+            },
+            {
+              "key": "targets",
+              "label": "Targets",
+              "items": [
+                "Consolidate evidence and choose the next specialization."
+              ]
+            },
+            {
+              "key": "implement",
+              "label": "Implement",
+              "items": [
+                "Metrics review: applications, interview conversion, recurring gaps.",
+                "Publish one technical write-up or open-source contribution; refresh CV and case studies."
+              ]
+            },
+            {
+              "key": "practical-project",
+              "label": "Practical project",
+              "items": [
+                "Portfolio index linking all repos, reports and demos."
+              ]
+            },
+            {
+              "key": "production-mapping",
+              "label": "Production mapping",
+              "items": [
+                "Positioning for the roles that responded best."
+              ]
+            },
+            {
+              "key": "acceptance",
+              "label": "Acceptance",
+              "items": [
+                "Gap list ranked by observed interview feedback, with a plan for each."
+              ]
+            },
+            {
+              "key": "deliverable",
+              "label": "Deliverable",
+              "items": [
+                "Portfolio index, write-up, 90-day plan."
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
