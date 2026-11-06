@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { RoadmapPhase, RoadmapWeek } from "../lib/roadmap";
 import {
   ProgressMap,
@@ -32,8 +32,16 @@ export function WeekCard({
   onNotesChange,
   onToggleItem,
 }: WeekCardProps) {
-  const [expanded, setExpanded] = useState(true);
   const state: WeekState = getWeekState(progress, phase.id, week.number);
+  const [expanded, setExpanded] = useState(state.status !== "completed");
+  const previousStatus = useRef(state.status);
+
+  useEffect(() => {
+    if (previousStatus.current !== "completed" && state.status === "completed") {
+      setExpanded(false);
+    }
+    previousStatus.current = state.status;
+  }, [state.status]);
 
   return (
     <div className="week-card">
