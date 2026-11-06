@@ -3,7 +3,7 @@ import { dirname, resolve } from "node:path";
 
 const projectRoot = resolve(process.cwd());
 const roadmapPath =
-  process.env.ROADMAP_PATH ?? resolve(projectRoot, "..", "ai-engineer-roadmap-28-weeks.md");
+  process.env.ROADMAP_PATH ?? resolve(projectRoot, "ai-engineer-roadmap-28-weeks.md");
 const outputPath = resolve(projectRoot, "src/data/roadmap.json");
 
 const content = (await import("node:fs")).readFileSync(roadmapPath, "utf8");
