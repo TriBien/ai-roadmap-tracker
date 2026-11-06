@@ -1,0 +1,24 @@
+{
+  "name": "AI Engineer Roadmap Tracker",
+  "short_name": "AI Roadmap",
+  "description": "Track progress through a 28-week AI engineering roadmap.",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#f6f7f9",
+  "theme_color": "#2f5fd0",
+  "icons": [
+    {
+      "src": "./icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "./icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    }
+  ]
+}

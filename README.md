@@ -60,8 +60,10 @@ The Vite config uses `base: "./"`, so the built app works from a project pages p
 Progress auto-loads and auto-saves to a JSON file on the user's local machine:
 
 1. Click **Connect ai-roadmap-tracker.json** and choose (or create) `Documents/ai-roadmap-tracker.json` in the file picker.
-2. The app stores the file handle and keeps the file in sync automatically on every change (writes are debounced). On the next visit it restores the handle and loads the file automatically.
-3. Browsers may require re-approval after a restart — click **Reconnect** to grant access again.
+2. When Chrome asks for permission, choose **Allow on every visit** (persistent permission). The app stores the file handle and keeps the file in sync automatically on every change (writes are debounced).
+3. After that, the app restores the file on every page open or reload without asking again. If access needs a one-time re-approval, click **Reconnect** and choose **Allow on every visit**.
+
+For guaranteed prompt-free access, install the app: open the browser menu and choose **Install** (Chrome/Edge). Installed apps keep file permissions automatically once granted.
 
 Direct file access uses the File System Access API (Chrome/Edge). In other browsers, use **Export JSON** / **Import JSON**. Progress is also cached in browser storage as a fallback.
 
@@ -94,6 +96,7 @@ ai-roadmap-tracker/
 │   ├── lib/                        # roadmap data, progress (de)serialization, file sync
 │   ├── data/roadmap.json          # generated roadmap data
 │   └── index.css
+├── public/                        # PWA manifest, service worker, icons
 ├── index.html
 ├── vite.config.ts
 └── package.json

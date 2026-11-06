@@ -54,7 +54,14 @@ export default function App() {
         return;
       }
       fileHandleRef.current = handle;
-      const permission = await checkPermission(handle);
+      let permission = await checkPermission(handle);
+      if (permission === "prompt") {
+        try {
+          permission = await requestPermission(handle);
+        } catch {
+          permission = "prompt";
+        }
+      }
       if (permission !== "granted") {
         setSyncState({
           kind: "needs-permission",
@@ -247,7 +254,7 @@ export default function App() {
     syncState.kind === "connected"
       ? `Auto-syncing with ${syncState.fileName}`
       : syncState.kind === "needs-permission"
-        ? `File access needs approval to resume syncing with ${syncState.fileName}.`
+        ? `One-time approval needed: click Reconnect and choose "Allow on every visit" (or install the app) to sync ${syncState.fileName} automatically from now on.`
         : syncState.kind === "error"
           ? syncState.message
           : isFileSystemAccessSupported()
@@ -306,8 +313,9 @@ export default function App() {
       <footer className="app-footer">
         <p>
           Progress auto-loads and auto-saves to{" "}
-          <code>{DOCUMENTS_PATH}</code> once connected. Browser storage keeps a
-          fallback copy.
+          <code>{DOCUMENTS_PATH}</code> once connected and remembered by the
+          browser. Install the app (browser menu → Install) to keep file access
+          permanently without prompts. Browser storage keeps a fallback copy.
         </p>
       </footer>
     </div>
