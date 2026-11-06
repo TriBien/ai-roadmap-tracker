@@ -33,7 +33,7 @@ export function WeekCard({
   onToggleItem,
 }: WeekCardProps) {
   const state: WeekState = getWeekState(progress, phase.id, week.number);
-  const [expanded, setExpanded] = useState(state.status !== "completed");
+  const [expanded, setExpanded] = useState(false);
   const previousStatus = useRef(state.status);
 
   useEffect(() => {
