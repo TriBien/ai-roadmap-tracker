@@ -280,12 +280,7 @@ export default function App() {
               Disconnect
             </button>
           )}
-          <button type="button" onClick={handleExport}>
-            Export JSON
-          </button>
-          <button type="button" onClick={() => importInputRef.current?.click()}>
-            Import JSON
-          </button>
+          
           <button type="button" onClick={handleReset}>
             Reset
           </button>
