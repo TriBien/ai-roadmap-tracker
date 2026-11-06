@@ -241,3 +241,62 @@ export function parseProgressMarkdown(text: string): ProgressMap {
   flush();
   return progress;
 }
+
+export interface ProgressFileContent {
+  app: "ai-roadmap-tracker";
+  version: 1;
+  updatedAt: string;
+  weeks: ProgressMap;
+}
+
+export function serializeProgressJson(progress: ProgressMap): string {
+  const content: ProgressFileContent = {
+    app: "ai-roadmap-tracker",
+    version: 1,
+    updatedAt: new Date().toISOString(),
+    weeks: progress,
+  };
+  return `${JSON.stringify(content, null, 2)}\n`;
+}
+
+function normalizeWeekState(value: unknown): WeekState {
+  const candidate = (value ?? {}) as Partial<WeekState>;
+  const status: WeekStatus =
+    candidate.status === "completed" || candidate.status === "in-progress"
+      ? candidate.status
+      : "not-started";
+  const notes = typeof candidate.notes === "string" ? candidate.notes : "";
+  const checkedItems = Array.isArray(candidate.checkedItems)
+    ? candidate.checkedItems.filter((item): item is string => typeof item === "string")
+    : [];
+  return { status, notes, checkedItems };
+}
+
+export function parseProgressJson(text: string): ProgressMap {
+  const data = JSON.parse(text) as unknown;
+  const source =
+    data && typeof data === "object" && "weeks" in (data as object)
+      ? (data as { weeks?: unknown }).weeks
+      : data;
+  const entries =
+    source && typeof source === "object"
+      ? (source as Record<string, unknown>)
+      : {};
+  const progress: ProgressMap = {};
+  for (const phase of roadmap.phases) {
+    for (const week of phase.weeks) {
+      const key = weekKey(phase.id, week.number);
+      progress[key] = normalizeWeekState(entries[key]);
+    }
+  }
+  return progress;
+}
+
+export function hasAnyProgress(progress: ProgressMap): boolean {
+  return Object.values(progress).some(
+    (state) =>
+      state.status !== "not-started" ||
+      state.notes.trim().length > 0 ||
+      state.checkedItems.length > 0
+  );
+}

@@ -55,27 +55,31 @@ The Vite config uses `base: "./"`, so the built app works from a project pages p
 - Tick checklist items as you complete them (ticks are kept per section item).
 - Add notes for decisions, blockers, links, next steps.
 
-### Syncing progress with a local text file
+### Syncing progress with Documents/ai-roadmap-tracker.json
 
-Progress can be synchronized with a plain-text markdown file on the user's local machine:
+Progress auto-loads and auto-saves to a JSON file on the user's local machine:
 
-- **Export progress** downloads `ai-engineer-roadmap-progress.md`.
-- **Import progress** reads a progress markdown file from the local machine.
-- **Open local file** / **Save local file** use the File System Access API (Chrome/Edge) to open and keep a handle to a progress file on the local machine, writing updates to it automatically.
+1. Click **Connect ai-roadmap-tracker.json** and choose (or create) `Documents/ai-roadmap-tracker.json` in the file picker.
+2. The app stores the file handle and keeps the file in sync automatically on every change (writes are debounced). On the next visit it restores the handle and loads the file automatically.
+3. Browsers may require re-approval after a restart — click **Reconnect** to grant access again.
+
+Direct file access uses the File System Access API (Chrome/Edge). In other browsers, use **Export JSON** / **Import JSON**. Progress is also cached in browser storage as a fallback.
 
 Progress file format:
 
-```markdown
-# AI Engineer Roadmap Progress
-
-## Phase 1: Job-ready AI engineering (Weeks 1-10)
-
-### Week 1: LLM gateway in Python (FastAPI)
-
-- status: in-progress
-- note: Building the provider-agnostic gateway.
-
-- [x] LLM API mechanics: tokens, context windows, sampling, streaming, cost model.
+```json
+{
+  "app": "ai-roadmap-tracker",
+  "version": 1,
+  "updatedAt": "2026-11-06T08:30:00.000Z",
+  "weeks": {
+    "p1:1": {
+      "status": "in-progress",
+      "notes": "Building the provider-agnostic gateway.",
+      "checkedItems": ["p1|1|fundamental|0"]
+    }
+  }
+}
 ```
 
 ## Project structure
@@ -87,7 +91,7 @@ ai-roadmap-tracker/
 ├── src/
 │   ├── App.tsx                     # main app, progress state, file sync actions
 │   ├── components/                 # PhaseSection, WeekCard, SummaryBar
-│   ├── lib/                        # roadmap data access + progress (de)serialization
+│   ├── lib/                        # roadmap data, progress (de)serialization, file sync
 │   ├── data/roadmap.json          # generated roadmap data
 │   └── index.css
 ├── index.html

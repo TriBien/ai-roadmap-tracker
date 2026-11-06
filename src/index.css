@@ -303,3 +303,15 @@ body {
     width: 120px;
   }
 }
+
+.sync-status.sync-connected {
+  color: var(--green);
+}
+
+.sync-status.sync-needs-permission {
+  color: var(--amber);
+}
+
+.sync-status.sync-error {
+  color: #b42318;
+}
